@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Api</title>
+</head>
+
+<body>
+    <h1>Test API</h1>
+    <select name="provinces" id="provinces" onchange="fetchDataRegencies(this.options[this.selectedIndex].value)">
+        <option value="">Pilih Provinsi</option>
+    </select>
+    <select name="regencies" id="regencies" onchange="fetchDataDistricts(this.options[this.selectedIndex].value)">
+        <option value="">Pilih Kab/Kota</option>
+    </select>
+    <select name="districts" id="districts" onchange="fetchDataVillages(this.options[this.selectedIndex].value)">
+        <option value="">Pilih Kecamatan</option>
+    </select>
+    <select name="villages" id="villages">
+        <option value="">Pilih Kelurahan</option>
+    </select>
+</body>
+<script>
+
+    const apiUrl = 'https://www.emsifa.com/api-wilayah-indonesia/api/';
+
+    function fetchDataProvinces() {
+        return fetch(apiUrl + 'provinces.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status}`);
+                }
+                return response.json();
+            });
+    }
+
+    function fetchDataRegencies(provinceId) {
+        console.log(provinceId);
+        fetch(apiUrl + 'regencies/' + provinceId + '.json')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status}`);
+                }
+                result = response.json().then((data) => {
+                    document.getElementById('regencies').innerHTML = data.map(item => `<option value="${item.id}" id="regencies-${item.id}">${item.name}</option>`).join('');
+                })
+                return response.json();
+            });
+    }
+
+    function fetchDataDistricts(districtId) {
+        return fetch(apiUrl + 'districts/' + districtId + '.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status}`);
+                }
+                result = response.json().then((data) => {
+                    document.getElementById('districts').innerHTML = data.map(item => `<option value="${item.id}" id="districts-${item.id}">${item.name}</option>`).join('');
+                })
+                return response.json();
+            });
+    }
+
+    function fetchDataVillages(villageId) {
+        return fetch(apiUrl + 'villages/' + villageId + '.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status}`);
+                }
+                result = response.json().then((data) => {
+                    document.getElementById('villages').innerHTML = data.map(item => `<option value="${item.id}" id="villages-${item.id}">${item.name}</option>`).join('');
+                })
+                return response.json();
+            });
+    }
+
+    fetchDataProvinces()
+        .then((result) => {
+            document.getElementById('provinces').innerHTML = result.map(item => `<option value="${item.id}" id="provinces-${item.id}">${item.name}</option>`).join('');
+        })
+        .catch((err) => {
+            alert(err)
+        });
+
+</script>
+
+</html>
